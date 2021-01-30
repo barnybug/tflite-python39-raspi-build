@@ -1,0 +1,19 @@
+diff -ruN tensorflow-master-orig/tensorflow/lite/tools/pip_package/Dockerfile tensorflow-master/tensorflow/lite/tools/pip_package/Dockerfile
+--- tensorflow-master-orig/tensorflow/lite/tools/pip_package/Dockerfile	2021-01-30 06:47:22.311719147 +0000
++++ tensorflow-master/tensorflow/lite/tools/pip_package/Dockerfile	2021-01-05 06:50:39.302737825 +0000
+@@ -10,15 +10,7 @@
+     apt-get install -y \
+       debhelper \
+       dh-python \
+-      python-all \
+-      python-setuptools \
+-      python-wheel \
+-      python-numpy \
+-      python-pip \
+       pybind11-dev \
+-      libpython-dev \
+-      libpython-dev:armhf \
+-      libpython-dev:arm64 \
+       python3-all \
+       python3-setuptools \
+       python3-wheel \

@@ -1,0 +1,43 @@
+---
+name: Build
+on: [push]
+jobs:
+  build:
+    name: Build
+    runs-on: ubuntu-20.04
+    steps:
+      - name: Checkout this repo
+        uses: actions/checkout@v2
+
+      - name: Checkout tensorflow
+        uses: actions/checkout@v2
+        with:
+          repository: 'tensorflow/tensorflow'
+          path: tensorflow
+      
+      - name: Patch build
+        run: patch -p1 < ../diff.patch
+        working-directory: tensorflow
+
+      - name: Build
+        run: make BASE_IMAGE=debian:sid PYTHON=python3 TENSORFLOW_TARGET=rpi docker-build
+        working-directory: tensorflow/tensorflow/lite/tools/pip_package
+
+      - name: Create Release
+        id: create_release
+        uses: actions/create-release@v1
+        env:
+          GITHUB_TOKEN: ${{ secrets.GITHUB_TOKEN }}
+        with:
+          tag_name: ${{ github.ref }}
+          release_name: Release ${{ github.ref }}
+
+      - name: Upload Release Asset
+        uses: actions/upload-release-asset@v1
+        env:
+          GITHUB_TOKEN: ${{ secrets.GITHUB_TOKEN }}
+        with:
+          upload_url: ${{ steps.create_release.outputs.upload_url }}
+          asset_path: ./tensorflow/tensorflow/lite/tools/pip_package/out/python3/debian-sid/tflite_runtime-2.5.0-cp39-cp39-linux_armv7l.whl
+          asset_name: tflite_runtime-2.5.0-cp39-cp39-linux_armv7l.whl
+          asset_content_type: application/zip
